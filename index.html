@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <style>
+      * {
+        background: black;
+        color: white;
+      }
+      table, th, td {
+        border-collapse: collapse;
+      }
+      table {
+        border: 0px solid;
+      }
+      th, td {
+        border: 1px solid;
+        padding: 3px;
+        text-align: left;
+      }
+      code {
+        background-color: #1f1f1f;
+        padding: 2px;
+        margin: 3px;
+      }
+      button {
+        padding: 1px;
+      }
+      .invis {
+        border: 0px solid;
+      }
+      .no_l {
+        border-left: 0px solid;
+      }
+      .no_r {
+        border-right: 0px solid;
+      }
+      .no_t {
+        border-top: 0px solid;
+      }
+      .no_b {
+        border-bottom: 0px solid;
+      }
+      .no_pad {
+        padding: 0px;
+      }
+      .w100 {
+        width: 100%;
+      }
+      .res-input, .rr-input {
+        width: 54px;
+      }
+    </style>
+    <title>CVT-RBv2 Display Mode Generator for xrandr</title>
+  </head>
+  <body>
+    <table>
+
+      <tr>
+        <th>Timings standard</th>
+        <td>
+          <select id="mode">
+            <option title="VESA Coordinated Video Timings">CVT</option>
+            <option title="VESA Coordinated Video Timings Reduced Blanking v2" selected>CVT RBv2</option>
+            <option title="Enter values manually">Manual</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th rowspan="2">Resolution</th>
+        <td id="res-preset2" class="no_b">
+          <select id="res-preset-select" class=w100>
+            <option disabled>Resolution</option>
+            <option selected>Custom</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td id="res-custom2" class="no_t"><nobr>
+          <input id="res-w-input" type="number" class="res-input" min="1">x<!--
+       --><input id="res-h-input" type="number" class="res-input" min="1"> px
+        </nobr></td>
+      </tr>
+
+      <tr>
+        <th rowspan="2">Refresh rate</th>
+        <td id="rr-preset2" class="no_b">
+          <select id="rr-preset-select" class=w100>
+            <option disabled>Refresh rate</option>
+            <option selected>Custom</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td id="rr-custom2" class="no_t">
+          <input id="rr-input" type="number" class="rr-input" value="60" step="1"> Hz
+        </td>
+
+      </tr>
+
+      <tr>
+        <th>Color space</th>
+        <td id="cs-preset">
+          <select id="cs-preset-select" class=w100>
+            <option disabled>Color space</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Color depth</th>
+        <td id="cd-preset">
+          <select id="cd-preset-select" class=w100>
+            <option disabled>Color depth</option>
+          </select>
+        </td>
+      </tr>
+
+    </table>
+
+    <span id="cs-warning">&nbsp;</span>
+
+    <br>
+    <button id="calculate">Calculate</button>
+    <h2>outputs</h2>
+
+    <table>
+
+      <tr>
+      <th>Horizontal resolution</th>
+      <td id="hactive"> px</td>
+      </tr>
+
+      <tr>
+      <th>Vertical resolution</th>
+      <td id="vactive"> px</td>
+      </tr>
+
+      <tr>
+      <th>Refresh rate</th>
+      <td id="refresh"> Hz</td>
+      </tr>
+
+      <tr>
+        <td class="no_pad no_l no_r">&nbsp;</td>
+      </tr>
+
+      <tr>
+        <th>H Total</th>
+        <td id="htotal"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;H Active</th>
+        <td id="hactive"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;H Blank</th>
+        <td id="hblank"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H Front Porch</th>
+        <td id="hfporch"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H Sync</th>
+        <td id="hsync"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H Back Porch</th>
+        <td id="hbporch"></td>
+      </tr>
+
+      <tr>
+        <th>V Total</th>
+        <td id="vtotal"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;V Active</th>
+        <td id="vactive"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;V Blank</th>
+        <td id="vblank"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V Front Porch</th>
+        <td id="vfporch"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V Sync</th>
+        <td id="vsync"></td>
+      </tr>
+
+      <tr>
+        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V Back Porch</th>
+        <td id="vbporch"></td>
+      </tr>
+
+      <tr>
+        <th>H refresh period</th>
+        <td id="hrefper">milli s</td>
+      </tr>
+
+      <tr>
+        <th>V refresh period</th>
+        <td id="vrefper">micro s</td>
+      </tr>
+
+      <tr>
+        <th>H Sync Polarity</th>
+        <td id="hsyncpol"></td>
+      </tr>
+
+      <tr>
+        <th>V Sync Polarity</th>
+        <td id="vsyncpol">micro s</td>
+      </tr>
+
+      <tr>
+        <th>Pixel Clock</th>
+        <td id="clockmhz">MHz warning when &lt;25mhz</td>
+      </tr>
+
+      <tr>
+        <th>Data rate</th>
+        <td id="dr"></td>
+      </tr>
+
+
+    </table>
+
+    <br>
+
+    <table>
+
+      <tr>
+        <th>Modeline</th>
+        <td><code id="modeline">Modeline 1920x1080_60.00 133.32 1920 1928 1960 2000 1080 1097 1105 1111 +HSync -VSync</code></td>
+        <td class="invis"><button>Copy</button></td>
+      </tr>
+
+      <tr>
+        <th>xrandr create display mode</th>
+        <td><code id="xnewmode">xrandr --newmode </code></td>
+        <td class="invis"><button>Copy</button></td>
+      </tr>
+
+      <tr>
+        <th>xrandr add display mode to </th>
+        <td><code id="xaddmode">xrandr --addmode </code></td>
+        <td class="invis"><button>Copy</button></td>
+      </tr>
+
+      <tr>
+        <th rowspan="2">xrandr set display mode on </th>
+        <td class="no_b"><code id="xoutput">xrandr --output device --mode</code></td>
+        <td class="invis"><button>Copy</button></td>
+      </tr>
+      <tr>
+        <td class="no_t">warning</td>
+      </tr>
+
+    </table>
+    <script src="renderer.js"></script>
+  </body>
+</html>
